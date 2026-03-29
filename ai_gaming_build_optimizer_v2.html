@@ -1,0 +1,464 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--gold:#F0C040;--gold2:#C8960A;--dim:rgba(240,192,64,0.12);--panel:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08);--txt:#E8E4D8;--muted:#8A8070}
+body{font-family:'Rajdhani',sans-serif}
+#app{background:#0A0C10;color:var(--txt);padding:18px;min-height:640px;border-radius:12px;position:relative;overflow:hidden}
+#app::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(240,192,64,0.06),transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(80,120,240,0.05),transparent 60%);pointer-events:none}
+
+/* NAV TABS */
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:0}
+.tab{padding:8px 16px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;color:var(--muted);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.tab:hover{color:var(--txt)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* SECTION */
+.sec-label{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;font-family:'Share Tech Mono',monospace}
+h1{font-size:20px;font-weight:700;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:2px}
+.subtitle{font-size:12px;color:var(--muted);letter-spacing:1px;margin-bottom:14px;font-family:'Share Tech Mono',monospace}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0}
+
+/* CHIPS */
+.chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:var(--panel);color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.5px;transition:all .15s;user-select:none}
+.chip:hover{border-color:rgba(240,192,64,.4);color:var(--txt);background:rgba(240,192,64,.06)}
+.chip.active{border-color:var(--gold);color:var(--gold);background:var(--dim)}
+
+/* INVENTORY GRID */
+.inv-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:10px}
+.inv-slot{aspect-ratio:1;border:1px solid var(--border);border-radius:8px;background:rgba(255,255,255,.02);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:border-color .15s,background .15s;overflow:hidden}
+.inv-slot:hover{border-color:rgba(240,192,64,.35);background:rgba(240,192,64,.04)}
+.inv-slot.filled{border-color:rgba(255,255,255,.12)}
+.inv-slot.selected{border-color:var(--gold)!important;background:var(--dim)!important}
+.inv-slot.equipped{border-color:rgba(64,200,112,.5)!important;background:rgba(64,200,112,.06)!important}
+.slot-icon{font-size:20px;line-height:1}
+.slot-qty{position:absolute;bottom:2px;right:4px;font-size:9px;font-family:'Share Tech Mono',monospace;color:var(--gold)}
+.slot-rarity{position:absolute;top:3px;right:3px;width:5px;height:5px;border-radius:50%}
+.r-legendary{background:#F0A020}.r-epic{background:#A060E0}.r-rare{background:#4080D0}.r-common{background:#808080}
+.inv-empty{color:var(--border);font-size:18px;opacity:.4}
+
+/* ITEM DETAIL */
+.detail-box{border:1px solid var(--border);border-radius:10px;background:var(--panel);padding:14px;min-height:80px}
+.detail-box.has-item{border-color:rgba(240,192,64,.25)}
+.det-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.det-icon{font-size:32px}
+.det-name{font-size:16px;font-weight:700;color:var(--gold)}
+.det-sub{font-size:12px;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.det-btns{display:flex;gap:6px;margin-top:8px}
+.det-btn{flex:1;padding:7px;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;transition:opacity .15s;border:none}
+.btn-gold{background:var(--gold);color:#0A0C10}.btn-gold:hover{opacity:.85}
+.btn-red{background:rgba(220,60,60,.8);color:#fff}.btn-red:hover{opacity:.85}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{color:var(--txt);border-color:var(--muted)}
+
+/* HUNT ZONE */
+.hunt-area{border:1px solid var(--border);border-radius:10px;padding:14px;background:var(--panel);margin-bottom:12px}
+.slime-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.slime-card{flex:1;min-width:80px;border:1px solid var(--border);border-radius:8px;padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;background:rgba(255,255,255,.02);position:relative}
+.slime-card:hover{transform:translateY(-2px);border-color:rgba(240,192,64,.4)}
+.slime-card:active{transform:scale(.96)}
+.slime-icon{font-size:26px;margin-bottom:4px}
+.slime-name{font-size:12px;font-weight:700;color:var(--txt)}
+.slime-level{font-size:10px;color:var(--muted);font-family:'Share Tech Mono',monospace}
+.slime-drops{font-size:9px;color:var(--gold);margin-top:3px}
+.slime-hp-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:5px;overflow:hidden}
+.slime-hp-fill{height:100%;background:#40C870;border-radius:2px;transition:width .3s}
+
+/* BATTLE LOG */
+.battle-log{border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,.3);padding:10px 12px;max-height:120px;overflow-y:auto;font-family:'Share Tech Mono',monospace;font-size:11px}
+.log-line{margin-bottom:3px;line-height:1.4}
+.log-dmg{color:#E86040}.log-drop{color:var(--gold)}.log-info{color:var(--muted)}.log-win{color:#40C870}
+
+/* HIT ANIMATION */
+@keyframes hitShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@keyframes dropPop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+.shaking{animation:hitShake .25s ease}
+.pop{animation:dropPop .35s ease}
+
+/* EQUIP PANEL */
+.equip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.equip-slot{border:1px dashed var(--border);border-radius:8px;padding:8px 6px;text-align:center;min-height:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.equip-slot.filled-eq{border-style:solid;border-color:rgba(64,200,112,.4);background:rgba(64,200,112,.04)}
+.eq-label{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;font-family:'Share Tech Mono',monospace;margin-bottom:4px}
+.eq-icon{font-size:22px}
+.eq-name{font-size:10px;color:var(--txt);margin-top:3px;font-weight:600}
+.eq-remove{position:absolute;top:3px;right:4px;font-size:9px;color:var(--muted);cursor:pointer;opacity:.6}
+.eq-remove:hover{opacity:1;color:#E86040}
+
+/* STAT SUMMARY */
+.stat-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.stat-card{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:8px;text-align:center}
+.stat-k{font-size:10px;color:var(--muted);letter-spacing:1px;font-family:'Share Tech Mono',monospace}
+.stat-v{font-size:18px;font-weight:700;color:var(--gold);font-family:'Share Tech Mono',monospace}
+
+/* BUILD RESULT */
+.result-box{border:1px solid rgba(240,192,64,.3);border-radius:10px;background:var(--panel);padding:14px}
+.build-badge{font-size:10px;letter-spacing:1.5px;color:#0A0C10;background:var(--gold);padding:2px 7px;border-radius:4px;font-family:'Share Tech Mono',monospace;font-weight:700;display:inline-block;margin-bottom:8px}
+.build-title{font-size:17px;font-weight:700;color:var(--gold);letter-spacing:1px;margin-bottom:10px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bar-name{font-size:11px;color:var(--muted);width:70px;font-family:'Share Tech Mono',monospace;text-transform:uppercase}
+.bar-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px}
+.bar-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.bar-val{font-size:11px;font-family:'Share Tech Mono',monospace;width:26px;text-align:right}
+.rec-items{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.rec-card{border:1px solid var(--border);border-radius:8px;padding:9px 6px;text-align:center;background:rgba(255,255,255,.02);cursor:pointer;transition:all .15s}
+.rec-card:hover{border-color:rgba(240,192,64,.35);background:rgba(240,192,64,.04)}
+.rec-icon{font-size:20px;margin-bottom:3px}
+.rec-name{font-size:10px;font-weight:600;color:var(--txt)}
+.rec-sub{font-size:9px;color:var(--muted);font-family:'Share Tech Mono',monospace;margin-top:1px}
+.tip-box{margin-top:10px;padding:8px 10px;border-left:2px solid rgba(240,192,64,.4);background:rgba(240,192,64,.04);border-radius:0 6px 6px 0;font-size:12px;color:var(--txt);line-height:1.5}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:160px;gap:8px}
+.empty-icon{font-size:28px;opacity:.2}
+.empty-text{font-size:13px;color:var(--muted);letter-spacing:1px}
+.boss-chip-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.style-row{display:flex;gap:6px;flex-wrap:wrap}
+</style>
+
+<div id="app">
+  <h1>⚔ Build Optimizer</h1>
+  <div class="subtitle">// AI-Powered Item Recommendation v2.0</div>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('inventory')">🎒 Inventory</button>
+    <button class="tab" onclick="switchTab('hunt')">⚔ Hunt</button>
+    <button class="tab" onclick="switchTab('build')">🧠 AI Build</button>
+  </div>
+  <div id="tab-inventory"></div>
+  <div id="tab-hunt" style="display:none"></div>
+  <div id="tab-build" style="display:none"></div>
+</div>
+
+<script>
+// ─── DATA ─────────────────────────────────────────────────────────
+const ALL_ITEMS = [
+  // Starter items
+  {id:'i1', name:'Iron Sword',       icon:'🗡', sub:'+40 ATK',         rarity:'common',    tags:['weapon','atk'],  stats:{ATK:40}},
+  {id:'i2', name:'Wooden Shield',    icon:'🛡', sub:'+30 DEF',         rarity:'common',    tags:['armor','def'],   stats:{DEF:30}},
+  {id:'i3', name:'Cloth Robe',       icon:'👘', sub:'+20 MATK',        rarity:'common',    tags:['armor','matk'],  stats:{MATK:20}},
+  {id:'i4', name:'Herb Pouch',       icon:'🌿', sub:'+15 HEAL',        rarity:'common',    tags:['acc','heal'],    stats:{HEAL:15}},
+  // Slime drops - common
+  {id:'s1', name:'Slime Gel',        icon:'🫧', sub:'+10 HP Regen',    rarity:'common',    tags:['mat','hp'],      stats:{HP:10}},
+  {id:'s2', name:'Fire Slime Core',  icon:'🔥', sub:'+25 ATK',         rarity:'rare',      tags:['weapon','atk'],  stats:{ATK:25}},
+  {id:'s3', name:'Ice Slime Shard',  icon:'❄', sub:'+20 RES',         rarity:'rare',      tags:['acc','res'],     stats:{RES:20}},
+  {id:'s4', name:'Poison Fang',      icon:'☠', sub:'+15 ATK, Poison', rarity:'rare',      tags:['weapon','atk'],  stats:{ATK:15,CRIT:5}},
+  {id:'s5', name:'Shadow Essence',   icon:'🌑', sub:'+30 MATK',        rarity:'epic',      tags:['armor','matk'],  stats:{MATK:30}},
+  {id:'s6', name:'King Slime Crown', icon:'👑', sub:'+50 ATK/DEF',     rarity:'legendary', tags:['acc','atk','def'],stats:{ATK:50,DEF:50}},
+  {id:'s7', name:'Slime Armor',      icon:'🧪', sub:'+45 DEF',         rarity:'rare',      tags:['armor','def'],   stats:{DEF:45}},
+  {id:'s8', name:'Magic Slime Orb',  icon:'🔮', sub:'+40 MATK',        rarity:'epic',      tags:['weapon','matk'], stats:{MATK:40}},
+  {id:'s9', name:'Thunder Core',     icon:'⚡', sub:'+35 ATK, Chain',  rarity:'epic',      tags:['weapon','atk'],  stats:{ATK:35,CRIT:10}},
+  {id:'s10',name:'Heal Slime Tear',  icon:'💧', sub:'+35 HEAL',        rarity:'rare',      tags:['acc','heal'],    stats:{HEAL:35}},
+  {id:'s11',name:'Steel Gel',        icon:'⚙', sub:'+30 DEF, Resist', rarity:'rare',      tags:['armor','def'],   stats:{DEF:30,RES:10}},
+  {id:'s12',name:'Arcane Residue',   icon:'✨', sub:'+50 MATK',        rarity:'epic',      tags:['weapon','matk'], stats:{MATK:50}},
+];
+
+const SLIMES = [
+  {id:'green',  icon:'🟢', name:'Green Slime',  level:1,  hp:30,  maxHp:30,  dmg:[3,8],   drops:['s1','i1','s7'],  dropRates:[0.8,0.4,0.2], xp:5},
+  {id:'fire',   icon:'🔴', name:'Fire Slime',   level:5,  hp:60,  maxHp:60,  dmg:[8,15],  drops:['s2','s4','s9'],  dropRates:[0.6,0.4,0.25],xp:12},
+  {id:'ice',    icon:'🔵', name:'Ice Slime',    level:5,  hp:60,  maxHp:60,  dmg:[6,12],  drops:['s3','s11','s7'], dropRates:[0.6,0.35,0.2],xp:12},
+  {id:'poison', icon:'🟣', name:'Poison Slime', level:8,  hp:80,  maxHp:80,  dmg:[10,18], drops:['s4','s1','s5'],  dropRates:[0.55,0.5,0.2],xp:18},
+  {id:'shadow', icon:'⚫', name:'Shadow Slime', level:12, hp:100, maxHp:100, dmg:[14,22], drops:['s5','s8','s12'], dropRates:[0.5,0.35,0.2],xp:25},
+  {id:'king',   icon:'👑', name:'King Slime',   level:20, hp:200, maxHp:200, dmg:[20,35], drops:['s6','s9','s12'], dropRates:[0.3,0.5,0.3],  xp:60},
+];
+
+const EQUIP_SLOTS = ['Weapon','Armor','Accessory','Offhand'];
+const STAT_COLORS = {ATK:'#E86040',DEF:'#4090D8',MATK:'#9060E0',HEAL:'#40C870',RES:'#4090D8',CRIT:'#E8A040',HP:'#40C870',SPEED:'#40D8D0'};
+const BOSSES = [{id:'dragon',label:'🐉 Dragon',tag:'dragon'},{id:'undead',label:'💀 Undead',tag:'undead'},{id:'demon',label:'👿 Demon',tag:'demon'},{id:'mech',label:'🤖 Mech',tag:'mech'},{id:'elemental',label:'🌊 Elemental',tag:'elem'}];
+const STYLES = [{id:'tank',label:'🛡 Tank',tag:'tank'},{id:'dps',label:'⚔ DPS',tag:'dps'},{id:'mage',label:'🔮 Mage',tag:'mage'},{id:'support',label:'💚 Support',tag:'supp'}];
+const BUILDS = {
+  'dragon-tank':{title:'Dragonguard Fortress',tip:'แนวรับหนักต่อไฟ ลด Fire DMG 65%',stats:{DEF:92,HP:85,RES:78,ATK:30},items:[{name:'Dragonscale Armor',icon:'🐉',sub:'+280 DEF',rarity:'legendary'},{name:'Firewall Shield',icon:'🛡',sub:'Fire RES+40%',rarity:'legendary'},{name:'Dragon Ring',icon:'💍',sub:'+15% HP',rarity:'epic'},{name:'Hellfire Boots',icon:'👢',sub:'Burn Immune',rarity:'epic'}]},
+  'dragon-dps':{title:'Dragonslayer Strike',tip:'Crit Build ทำ True DMG กับมังกร',stats:{ATK:95,CRIT:88,SPEED:70,DEF:25},items:[{name:'Bane of Dragons',icon:'🗡',sub:'+350 ATK',rarity:'legendary'},{name:'Crit Amulet',icon:'📿',sub:'CRIT+25%',rarity:'epic'},{name:'Swiftscale Gloves',icon:'🧤',sub:'ATK SPD+20%',rarity:'epic'},{name:'Slayer Talisman',icon:'🏅',sub:'True DMG+15%',rarity:'rare'}]},
+  'dragon-mage':{title:'Arcane Wyrmscorch',tip:'Lightning ต้านไฟ กดดีบัฟ Fire Absorb',stats:{MATK:94,CRIT:75,RES:60,HP:40},items:[{name:'Stormcaller Staff',icon:'⚡',sub:'+420 MATK',rarity:'legendary'},{name:'Nullfire Tome',icon:'📖',sub:'Fire Absorb+35%',rarity:'epic'},{name:'Mana Crystal',icon:'💎',sub:'+200 MP',rarity:'epic'},{name:'Phase Ring',icon:'💍',sub:'Spell Pen+20%',rarity:'rare'}]},
+  'dragon-supp':{title:'Aegis Warden',tip:'ปกป้องทีมจาก AoE Fire ฟื้น HP ต่อเนื่อง',stats:{HEAL:88,RES:80,HP:72,ATK:20},items:[{name:'Holy Veil',icon:'✨',sub:'Party Fire RES+30%',rarity:'legendary'},{name:'Warden Staff',icon:'🌿',sub:'Heal+40%',rarity:'epic'},{name:'Barrier Charm',icon:'🫧',sub:'Shield 500',rarity:'epic'},{name:'Dragonfait Herb',icon:'🌸',sub:'Regen+80/s',rarity:'rare'}]},
+  'undead-tank':{title:'Hallowed Bastion',tip:'Holy Shield ทำให้ Undead ถดถอย',stats:{DEF:88,HP:90,RES:82,ATK:22},items:[{name:'Sacred Plate',icon:'⚜',sub:'+300 DEF',rarity:'legendary'},{name:'Exorcist Shield',icon:'🛡',sub:'Dark RES+45%',rarity:'epic'},{name:'Holy Water',icon:'💧',sub:'Undead+50%',rarity:'epic'},{name:'Blessed Boots',icon:'👢',sub:'Fear Immune',rarity:'rare'}]},
+  'undead-dps':{title:"Reaper's Edge",tip:'Silver + Holy Bonus DMG ต่อ Undead ทุกประเภท',stats:{ATK:90,CRIT:80,BONUS:95,DEF:20},items:[{name:'Silver Executioner',icon:'🗡',sub:'+320 ATK',rarity:'legendary'},{name:'Banisher Ring',icon:'💍',sub:'Undead+40%',rarity:'epic'},{name:'Ghostbane Quiver',icon:'🏹',sub:'Pierce Undead',rarity:'epic'},{name:'Rosary of Doom',icon:'📿',sub:'CRIT+30%',rarity:'rare'}]},
+  'undead-mage':{title:'Lightweaver',tip:'Holy Magic เผา Undead ด้วย Sun Flare',stats:{MATK:96,HEAL:85,RES:55,HP:38},items:[{name:'Sunburst Orb',icon:'☀',sub:'+450 MATK',rarity:'legendary'},{name:'Tome of Radiance',icon:'📖',sub:'Holy Amp+35%',rarity:'epic'},{name:'Lich Bane Core',icon:'💀',sub:'Undead Pen+25%',rarity:'epic'},{name:'Astral Ring',icon:'🌙',sub:'CD-20%',rarity:'rare'}]},
+  'undead-supp':{title:'Soul Shepherd',tip:'Cleanse curse และ Revive ทีมฉุกเฉิน 1 ครั้ง',stats:{HEAL:92,RES:78,HP:65,ATK:15},items:[{name:'Resurrection Tome',icon:'📜',sub:'Revive 1x',rarity:'legendary'},{name:'Cleansing Bell',icon:'🔔',sub:'Remove Curse',rarity:'epic'},{name:'Spirit Ward',icon:'🌀',sub:'Spirit Barrier',rarity:'epic'},{name:'Holy Incense',icon:'🕯',sub:'Fear Aura',rarity:'rare'}]},
+  'demon-tank':{title:'Hellbound Guardian',tip:'รับ Chaos Damage แทนทีม ยิ่งถูกตียิ่ง Counter',stats:{DEF:90,HP:85,CRIT:70,RES:65},items:[{name:'Chaos Bulwark',icon:'🔥',sub:'+350 DEF',rarity:'legendary'},{name:'Demoncore Shield',icon:'🛡',sub:'Block+40%',rarity:'legendary'},{name:'Infernal Gauntlets',icon:'🧤',sub:'Reflect 20%',rarity:'epic'},{name:'Hellplate Boots',icon:'👢',sub:'Burn Immune',rarity:'rare'}]},
+  'demon-dps':{title:'Chaos Reaver',tip:'ดูดชีวิตจากทุก Hit – Lifesteal สูงสุด',stats:{ATK:94,HEAL:90,CRIT:72,DEF:18},items:[{name:'Soul Render',icon:'⚰',sub:'+380 ATK, 25% LS',rarity:'legendary'},{name:'Blood Pact Ring',icon:'💍',sub:'Lifesteal+15%',rarity:'epic'},{name:'Frenzy Mask',icon:'😈',sub:'ATK+10%/kill',rarity:'epic'},{name:'Chaos Shard',icon:'🔮',sub:'Chaos Pen+20%',rarity:'rare'}]},
+  'demon-mage':{title:'Voidcaller',tip:'Summon Void Rift ทำ DoT ต่อเนื่อง',stats:{MATK:98,HP:50,RES:50,CRIT:45},items:[{name:'Void Staff',icon:'🌑',sub:'+480 MATK',rarity:'legendary'},{name:'Abyss Codex',icon:'📕',sub:'DoT+50%',rarity:'epic'},{name:'Rift Crystal',icon:'💎',sub:'Void Pen+30%',rarity:'epic'},{name:'Soul Chain',icon:'⛓',sub:'Slow+Silence',rarity:'rare'}]},
+  'demon-supp':{title:'Dark Chaplain',tip:'Corrupt Heal ดูดชีพศัตรูมาฟื้นทีม',stats:{HEAL:85,RES:65,HP:50,ATK:20},items:[{name:'Corrupt Grail',icon:'🏆',sub:'Drain Heal+40%',rarity:'legendary'},{name:'Shadow Mantle',icon:'🧣',sub:'DMG Reduce 25%',rarity:'epic'},{name:'Demon Eye Relic',icon:'👁',sub:'See Buffs',rarity:'epic'},{name:'Dark Pact Seal',icon:'🔏',sub:'Manaless',rarity:'rare'}]},
+  'mech-tank':{title:'Ironclad Siege',tip:'EM Shield หยุด Mech Skills ชั่วคราว',stats:{DEF:95,HP:80,RES:88,ATK:28},items:[{name:'Titanium Plating',icon:'🔩',sub:'+320 DEF',rarity:'legendary'},{name:'EM Barrier Core',icon:'⚙',sub:'EMP Immune',rarity:'legendary'},{name:'Nano-Repair Kit',icon:'🔧',sub:'Repair 50/s',rarity:'epic'},{name:'Insulated Boots',icon:'👢',sub:'Shock Immune',rarity:'rare'}]},
+  'mech-dps':{title:'Overclocked Breaker',tip:'Armor Pen Build ทะลุกระดอง 100%',stats:{ATK:92,CRIT:96,SPEED:68,DEF:15},items:[{name:'Plasma Cutter',icon:'⚡',sub:'+360 ATK',rarity:'legendary'},{name:'Overclock Module',icon:'🖥',sub:'ATK SPD+30%',rarity:'epic'},{name:'EMP Grenade',icon:'💣',sub:'Disable Skill',rarity:'epic'},{name:'Targeting System',icon:'🎯',sub:'CRIT+20%',rarity:'rare'}]},
+  'mech-mage':{title:'Surge Protocol',tip:'Lightning Overload Chain DMG ทุก Mech',stats:{MATK:90,CRIT:88,RES:58,HP:42},items:[{name:'Surge Wand',icon:'🌩',sub:'+440 MATK',rarity:'legendary'},{name:'Circuit Breaker',icon:'⚙',sub:'Lightning+40%',rarity:'epic'},{name:'Data Tome',icon:'📱',sub:'CD-25%',rarity:'epic'},{name:'Static Orb',icon:'🔮',sub:'Stun on Crit',rarity:'rare'}]},
+  'mech-supp':{title:'Field Engineer',tip:'Repair Drones ซ่อมทีมอัตโนมัติ',stats:{HEAL:94,HP:80,RES:72,ATK:18},items:[{name:'Repair Drone Array',icon:'🤖',sub:'Auto Heal 100/s',rarity:'legendary'},{name:'Shield Emitter',icon:'🫧',sub:'Party Shield+300',rarity:'epic'},{name:'Overclock Beacon',icon:'📡',sub:'Team ATK+15%',rarity:'epic'},{name:'Medpack Belt',icon:'🩺',sub:'Instant Revive',rarity:'rare'}]},
+  'elem-tank':{title:'Elemental Bastion',tip:'Adapt Shield เปลี่ยน Element ตาม Boss',stats:{DEF:88,HP:82,RES:95,ATK:22},items:[{name:'Prism Armor',icon:'🌈',sub:'+300 DEF, All RES',rarity:'legendary'},{name:'Elemental Core',icon:'💎',sub:'Auto-Resist',rarity:'legendary'},{name:'Runic Bracers',icon:'🪬',sub:'Magic Absorb 20%',rarity:'epic'},{name:'Terra Boots',icon:'🌍',sub:'Ground Immune',rarity:'rare'}]},
+  'elem-dps':{title:'Elemental Surge',tip:'Combo 2 Elements = Reaction DMG +200%',stats:{ATK:88,CRIT:96,SPEED:75,DEF:20},items:[{name:'Catalyst Blade',icon:'🔥',sub:'+330 ATK, React',rarity:'legendary'},{name:'Element Amplifier',icon:'⚗',sub:'React DMG+80%',rarity:'epic'},{name:'Storm Amulet',icon:'⛈',sub:'Chain Element+2',rarity:'epic'},{name:'Focus Crystal',icon:'🔮',sub:'CRIT React+25%',rarity:'rare'}]},
+  'elem-mage':{title:'Archmage Nexus',tip:'Cast 3 Elements พร้อมกัน Summon Primordial Storm',stats:{MATK:97,CRIT:92,RES:62,HP:38},items:[{name:'Primordial Staff',icon:'🌪',sub:'+500 MATK',rarity:'legendary'},{name:'Tri-Element Tome',icon:'📚',sub:'3 Spell Combo',rarity:'legendary'},{name:'Mana Vortex',icon:'🌀',sub:'MP Regen+60',rarity:'epic'},{name:'Arcane Familiar',icon:'🦋',sub:'Multi-cast Boost',rarity:'rare'}]},
+  'elem-supp':{title:'Nature Warden',tip:'Terrain Control เปลี่ยนสภาพแวดล้อมให้เป็นประโยชน์',stats:{HEAL:86,HP:80,RES:80,ATK:22},items:[{name:'Gaia Staff',icon:'🌳',sub:'Terrain Control',rarity:'legendary'},{name:'Spring Blossom',icon:'🌸',sub:'Heal Aura+50/s',rarity:'epic'},{name:'Wind Chime',icon:'🎐',sub:'Party SPD+25%',rarity:'epic'},{name:'Earth Seed',icon:'🌱',sub:'Regen Field 3x3',rarity:'rare'}]},
+};
+
+// ─── STATE ────────────────────────────────────────────────────────
+let inventory = [
+  {itemId:'i1',qty:1},{itemId:'i2',qty:1},{itemId:'i3',qty:1},{itemId:'i4',qty:1},
+  null,null,null,null,null,null,null,null,
+  null,null,null,null,null,null,null,null,null,null,null,null
+]; // 24 slots
+let equipped = {Weapon:null,Armor:null,Accessory:null,Offhand:null};
+let selectedSlot = null;
+let currentTab = 'inventory';
+let slimeStates = SLIMES.map(s=>({...s}));
+let battleLog = [];
+let playerXP = 0;
+let playerLevel = 1;
+let selBoss = null, selStyle = null;
+
+// ─── UTILS ────────────────────────────────────────────────────────
+function getItem(id){ return ALL_ITEMS.find(i=>i.id===id) }
+function rarityColor(r){ return {legendary:'#F0A020',epic:'#A060E0',rare:'#4080D0',common:'#808080'}[r]||'#808080' }
+function rand(a,b){ return Math.floor(Math.random()*(b-a+1))+a }
+function addLog(msg,cls){ battleLog.unshift({msg,cls}); if(battleLog.length>30)battleLog.pop() }
+function addInventory(itemId){
+  // stack same item
+  for(let i=0;i<inventory.length;i++){
+    if(inventory[i]&&inventory[i].itemId===itemId){ inventory[i].qty++; return true }
+  }
+  for(let i=0;i<inventory.length;i++){
+    if(!inventory[i]){ inventory[i]={itemId,qty:1}; return true }
+  }
+  return false; // full
+}
+function calcStats(){
+  let s={ATK:0,DEF:0,MATK:0,HEAL:0,RES:0,CRIT:0,HP:0,SPEED:0};
+  Object.values(equipped).forEach(e=>{
+    if(e){ const it=getItem(e); if(it){ Object.entries(it.stats).forEach(([k,v])=>{ if(s[k]!==undefined)s[k]+=v }) }}
+  });
+  return s;
+}
+
+// ─── RENDER FUNCTIONS ─────────────────────────────────────────────
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.textContent.toLowerCase().includes(tab.substring(0,4).toLowerCase())||
+    (tab==='inventory'&&t.textContent.includes('Inventory'))||(tab==='hunt'&&t.textContent.includes('Hunt'))||(tab==='build'&&t.textContent.includes('Build'))));
+  document.getElementById('tab-inventory').style.display=tab==='inventory'?'block':'none';
+  document.getElementById('tab-hunt').style.display=tab==='hunt'?'block':'none';
+  document.getElementById('tab-build').style.display=tab==='build'?'block':'none';
+  if(tab==='inventory')renderInventory();
+  else if(tab==='hunt')renderHunt();
+  else renderBuildTab();
+}
+
+function renderInventory(){
+  const el=document.getElementById('tab-inventory');
+  const stats=calcStats();
+  
+  // Build equip slots HTML
+  let eqHTML=EQUIP_SLOTS.map(slot=>{
+    const eid=equipped[slot];
+    const it=eid?getItem(eid):null;
+    return `<div class="equip-slot${it?' filled-eq':''}">
+      <div class="eq-label">${slot}</div>
+      ${it?`<div class="eq-icon">${it.icon}</div><div class="eq-name">${it.name}</div><span class="eq-remove" onclick="unequip('${slot}')">✕</span>`
+          :`<div style="font-size:18px;opacity:.2">○</div>`}
+    </div>`;
+  }).join('');
+
+  // Stat summary
+  const statEntries=[['ATK',stats.ATK],['DEF',stats.DEF],['MATK',stats.MATK],['HEAL',stats.HEAL]];
+  let statHTML=statEntries.map(([k,v])=>`<div class="stat-card"><div class="stat-k">${k}</div><div class="stat-v">${v}</div></div>`).join('');
+
+  // Inventory grid
+  let invHTML=inventory.map((slot,i)=>{
+    if(!slot) return `<div class="inv-slot" onclick="selectSlot(${i})"><div class="inv-empty">+</div></div>`;
+    const it=getItem(slot.itemId);
+    if(!it) return `<div class="inv-slot" onclick="selectSlot(${i})"><div class="inv-empty">+</div></div>`;
+    const isEq=Object.values(equipped).includes(slot.itemId);
+    const isSel=selectedSlot===i;
+    return `<div class="inv-slot filled${isSel?' selected':''}${isEq?' equipped':''}" onclick="selectSlot(${i})">
+      <div class="slot-rarity r-${it.rarity}"></div>
+      <div class="slot-icon">${it.icon}</div>
+      ${slot.qty>1?`<div class="slot-qty">x${slot.qty}</div>`:''}
+    </div>`;
+  }).join('');
+
+  // Selected item detail
+  let detHTML='<div class="detail-box"><div style="display:flex;align-items:center;height:60px;gap:8px;color:var(--muted);font-size:13px">กดไอเทมในกระเป๋าเพื่อดูรายละเอียด</div></div>';
+  if(selectedSlot!==null && inventory[selectedSlot]){
+    const slot=inventory[selectedSlot];
+    const it=getItem(slot.itemId);
+    if(it){
+      const isEq=Object.values(equipped).includes(slot.itemId);
+      const eqSlotFor=it.tags.includes('weapon')?'Weapon':it.tags.includes('armor')?'Armor':it.tags.includes('acc')?'Accessory':'Offhand';
+      detHTML=`<div class="detail-box has-item">
+        <div class="det-row">
+          <div class="det-icon">${it.icon}</div>
+          <div>
+            <div class="det-name">${it.name}</div>
+            <div class="det-sub" style="color:${rarityColor(it.rarity)}">${it.rarity.toUpperCase()} · ${it.sub}</div>
+          </div>
+        </div>
+        <div class="det-btns">
+          ${isEq?`<button class="det-btn btn-ghost" onclick="unequip('${eqSlotFor}')">ถอด</button>`
+                :`<button class="det-btn btn-gold" onclick="equip(${selectedSlot},'${eqSlotFor}')">สวมใส่ (${eqSlotFor})</button>`}
+          <button class="det-btn btn-red" onclick="dropItem(${selectedSlot})">ทิ้ง</button>
+        </div>
+      </div>`;
+    }
+  }
+
+  el.innerHTML=`
+    <div class="sec-label">Equipment Slots</div>
+    <div class="equip-grid">${eqHTML}</div>
+    <div class="sec-label">Stats</div>
+    <div class="stat-sum" style="margin-bottom:14px">${statHTML}</div>
+    <div class="divider"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <div class="sec-label" style="margin:0">Inventory (${inventory.filter(Boolean).length}/24)</div>
+      <div style="font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace">LV ${playerLevel} · ${playerXP} XP</div>
+    </div>
+    <div class="inv-grid">${invHTML}</div>
+    ${detHTML}
+  `;
+}
+
+function renderHunt(){
+  const el=document.getElementById('tab-hunt');
+  let slimeHTML=slimeStates.map((s,i)=>{
+    const pct=Math.round(s.hp/s.maxHp*100);
+    return `<div class="slime-card" id="slime-${s.id}" onclick="attackSlime(${i})">
+      <div class="slime-icon">${s.icon}</div>
+      <div class="slime-name">${s.name}</div>
+      <div class="slime-level">LV ${s.level}</div>
+      <div class="slime-drops">Drops: ${s.drops.slice(0,2).map(d=>getItem(d)?.icon||'?').join(' ')}</div>
+      <div class="slime-hp-bar"><div class="slime-hp-fill" style="width:${pct}%"></div></div>
+      <div style="font-size:9px;color:var(--muted);margin-top:2px;font-family:'Share Tech Mono',monospace">${s.hp}/${s.maxHp}</div>
+    </div>`;
+  }).join('');
+
+  let logHTML=battleLog.slice(0,10).map(l=>`<div class="log-line ${l.cls}">${l.msg}</div>`).join('')||'<div class="log-line log-info">// รอการต่อสู้...</div>';
+
+  el.innerHTML=`
+    <div class="sec-label">Hunt Zone — กดเพื่อโจมตีสไลม์</div>
+    <div class="hunt-area">
+      <div class="slime-row">${slimeHTML}</div>
+    </div>
+    <div class="sec-label">Battle Log</div>
+    <div class="battle-log">${logHTML}</div>
+    <div style="margin-top:10px;font-size:11px;color:var(--muted);font-family:'Share Tech Mono',monospace">💡 กดซ้ำหลายครั้งเพื่อสู้ต่อเนื่อง · ฆ่าแล้วจะ respawn พร้อม drop</div>
+  `;
+}
+
+function renderBuildTab(){
+  const el=document.getElementById('tab-build');
+  let bossHTML=BOSSES.map(b=>`<div class="chip${selBoss===b.id?' active':''}" onclick="selBossF('${b.id}')">${b.label}</div>`).join('');
+  let styleHTML=STYLES.map(s=>`<div class="chip${selStyle===s.id?' active':''}" onclick="selStyleF('${s.id}')">${s.label}</div>`).join('');
+
+  let buildHTML='';
+  if(selBoss&&selStyle){
+    const boss=BOSSES.find(b=>b.id===selBoss);
+    const style=STYLES.find(s=>s.id===selStyle);
+    const key=`${boss.tag}-${style.tag}`;
+    const build=BUILDS[key];
+    if(build){
+      const stats=Object.entries(build.stats);
+      const statHTML=stats.map(([k,v])=>`<div class="bar-row">
+        <span class="bar-name">${k}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${v}%;background:${STAT_COLORS[k]||'#888'};opacity:.8"></div></div>
+        <span class="bar-val">${v}</span>
+      </div>`).join('');
+      const itemHTML=build.items.map(it=>`<div class="rec-card">
+        <div class="rarity-dot r-${it.rarity}" style="display:inline-block;width:5px;height:5px;border-radius:50%;margin-bottom:3px"></div>
+        <div class="rec-icon">${it.icon}</div>
+        <div class="rec-name">${it.name}</div>
+        <div class="rec-sub">${it.sub}</div>
+      </div>`).join('');
+      buildHTML=`<div class="result-box">
+        <div class="build-badge">OPTIMAL BUILD</div>
+        <div class="build-title">${build.title}</div>
+        ${statHTML}
+        <div class="rec-items">${itemHTML}</div>
+        <div class="tip-box">💡 ${build.tip}</div>
+      </div>`;
+    }
+  } else {
+    buildHTML=`<div class="empty-state"><div class="empty-icon">🧠</div><div class="empty-text">เลือกบอสและสไตล์เพื่อรับ Build</div></div>`;
+  }
+
+  el.innerHTML=`
+    <div class="sec-label">เลือกประเภทบอส</div>
+    <div class="boss-chip-row">${bossHTML}</div>
+    <div class="sec-label">สไตล์การเล่น</div>
+    <div class="style-row" style="margin-bottom:14px">${styleHTML}</div>
+    <hr class="divider">
+    ${buildHTML}
+  `;
+}
+
+function selectSlot(i){
+  selectedSlot=selectedSlot===i?null:i;
+  renderInventory();
+}
+
+function equip(slotIdx,eqSlot){
+  if(!inventory[slotIdx])return;
+  const id=inventory[slotIdx].itemId;
+  // unequip existing
+  if(equipped[eqSlot]){
+    addInventory(equipped[eqSlot]);
+    // remove one from original slot
+  }
+  equipped[eqSlot]=id;
+  // remove from inventory (qty 1)
+  if(inventory[slotIdx].qty>1){ inventory[slotIdx].qty-- }
+  else { inventory[slotIdx]=null }
+  selectedSlot=null;
+  renderInventory();
+}
+
+function unequip(eqSlot){
+  if(!equipped[eqSlot])return;
+  const ok=addInventory(equipped[eqSlot]);
+  if(ok){ equipped[eqSlot]=null; renderInventory(); }
+}
+
+function dropItem(slotIdx){
+  if(!inventory[slotIdx])return;
+  inventory[slotIdx]=null;
+  selectedSlot=null;
+  renderInventory();
+}
+
+function attackSlime(idx){
+  const s=slimeStates[idx];
+  const stats=calcStats();
+  const myATK=Math.max(10, stats.ATK+stats.MATK+5);
+  const dmg=rand(Math.floor(myATK*0.8), Math.floor(myATK*1.2));
+  s.hp=Math.max(0,s.hp-dmg);
+
+  const el=document.getElementById(`slime-${s.id}`);
+  if(el){ el.classList.add('shaking'); setTimeout(()=>el.classList.remove('shaking'),300); }
+
+  addLog(`⚔ โจมตี ${s.name} ทำ ${dmg} DMG! (HP: ${s.hp}/${s.maxHp})`,'log-dmg');
+
+  if(s.hp<=0){
+    // Drop loot
+    let dropped=false;
+    s.drops.forEach((dropId,di)=>{
+      if(Math.random()<s.dropRates[di]){
+        const ok=addInventory(dropId);
+        if(ok){
+          const it=getItem(dropId);
+          addLog(`✨ ได้รับ: ${it.icon} ${it.name}!`,'log-drop');
+          dropped=true;
+        }
+      }
+    });
+    if(!dropped) addLog(`😔 ไม่มี Drop ครั้งนี้...`,'log-info');
+    playerXP+=s.xp;
+    if(playerXP>=playerLevel*50){ playerXP-=playerLevel*50; playerLevel++; addLog(`⬆ Level Up! LV ${playerLevel}`,'log-win'); }
+    addLog(`✅ ${s.name} ตายแล้ว! +${s.xp} XP`,'log-win');
+    // Respawn
+    setTimeout(()=>{
+      slimeStates[idx].hp=s.maxHp;
+      if(currentTab==='hunt') renderHunt();
+    },1500);
+  }
+
+  renderHunt();
+}
+
+function selBossF(id){ selBoss=id; renderBuildTab(); }
+function selStyleF(id){ selStyle=id; renderBuildTab(); }
+
+// Init
+renderInventory();
+</script>
